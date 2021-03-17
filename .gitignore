@@ -1,0 +1,9 @@
+.idea/.gitignore
+.idea/deployment.xml
+.idea/inspectionProfiles/
+.idea/leaderborad_server.iml
+.idea/misc.xml
+.idea/modules.xml
+.idea/vcs.xml
+__pycache__/
+example.db
