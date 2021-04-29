@@ -11,6 +11,7 @@ leaps.db
 config/production.py
 .idea/dataSources/
 app/resources/task/
+migrations/
 venv/
 .idea/
 sqlite3_example/
