@@ -13,3 +13,4 @@ config/production.py
 app/resources/task/
 venv/
 .idea/
+sqlite3_example/
