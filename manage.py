@@ -1,5 +1,5 @@
 from flask_script import Manager
-from app import app
+from app import create_app
 
 import os
 import unittest
@@ -12,7 +12,7 @@ from app import db
 from app.models import *
 
 
-manager = Manager(app)
+manager = Manager(create_app())
 
 manager.add_command('db', MigrateCommand)
 
