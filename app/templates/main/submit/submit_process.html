@@ -2,74 +2,70 @@
 {% block content %}
 
 <div class="container">
-    <h1>Submit process</h1>
+    <h1>Submit Process</h1>
 
-{% for field, errors in form.errors.items() %}
-<div class="alert alert-danger" role="alert">
-    <strong>{{ form[field].label }}</strong>: {{ ', '.join(errors) }}
+<div id="monitor-filed">
+    <div class="alert alert-info" role="alert" id="progress-window">
+        <div id="progress-status">
+            {% block task_desc %}
+            {% endblock %}
+        </div>
+        <div id="progress-server-message"> hello world</div>
+    </div>
+    <fieldset id="progress" style="display: none">
+        <div class="progress-trough">
+            <div id="progress-bar" class="progress-bar">0%</div>
+        </div>
+    </fieldset>
+    <p></p>
+
 </div>
-{% endfor %}
 
+<div>
+    <strong>Submitter: {{g.user.email}} / {{g.user.nickname}} / {{g.user.student_name}} / {{g.user.student_number}}</strong>
+    <p> </p>
+</div>
 <form id="upload-form" method="POST" enctype="multipart/form-data">
     {{ form.csrf_token }}
     <div class="form-group">
         <label for="teamname">&nbsp;Team Name</label>
-        <input type="text" class="col-xs-6 margin-bottom-20 form-control" name="teamname" id="teamname"
+        <input disabled="disabled" type="text" class="col-xs-6 margin-bottom-20 form-control" name="teamname" id="teamname"
                value="{{ form.teamname.data or '' }}">
     </div>
 
     <div class="form-group">
         <label for="method">&nbsp;Method Name (e.g., DnCNN)</label>
-        <input type="text" class="col-xs-6 margin-bottom-20 form-control" name="method" id="method"
+        <input disabled="disabled" type="text" class="col-xs-6 margin-bottom-20 form-control" name="method" id="method"
                value="{{ form.method.data or '' }}">
     </div>
     <p> </p>
 
     <div class="form-group">
         <label for="code">&nbsp;code link (github)</label>
-        <input type="text" class="col-xs-6 margin-bottom-20 form-control" name="code" id="code"
+        <input disabled="disabled" type="text" class="col-xs-6 margin-bottom-20 form-control" name="code" id="code"
                value="{{ form.code.data or '' }}">
     </div>
     <p> </p>
 
     <strong>Task:</strong><br>
-    {{form.task(class_="form-control")}}
+    {{form.task(class_="form-control", disabled="disabled")}}
 
     <p> </p>
     <strong>Files:</strong><br>
-    Select file OR drag them into the box below.
-    <input id="file-picker"  type="file" name="file" accept=".zip"><p>
-
-    <div id="dropbox">
-        Drag and Drop Files Here (*.zip)
-    </div>
-
-    <fieldset id="progress" style="display: none">
-        <legend>Files Progress</legend>
-        <div>
-            <label>Status</label>
-            <p class="alert alert-info" role="alert" id="progress-status">
-                <strong>Submit start</strong>
-            </p>
-        </div>
-        <p> </p>
-        <div class="progress-trough">
-            <div id="progress-bar" class="progress-bar">0%</div>
-        </div>
-    </fieldset><p> </p>
-
+    Select zip file into the box below.
+    <input id="file-picker" type="file" name="file" accept=".zip"><p>
+    <p> </p>
     <input type="submit" value="Submit" id="upload-button">
 </form>
-
-<input type="button" value="Test" id="test_button"/> hello world
-<input type="button" value="Test" id="test2"/> 2
 </div>
+
 
 <script>
     var SELECTED_FILE  = "";
-    function movePos(id){
-        var offset = $(id).offset();
-        $('html').animate({scrollTop: offset.top}, 400);
+    let files = null
+
+    function moveTop(){
+        $('html').scrollTop(0);
     }
     function collectFormData() {
         // Go through all the form fields and collect their names/values.
@@ -95,16 +91,24 @@
                     return;
                 }
             }
-
             fd.append(name, value);
         });
-
         return fd;
     }
 
-    function handleFile(f, filename) {
+    async function openZip(){
         var zip_container = new JSZip();
-        zip_container.loadAsync(f)
+        zip_container.loadAsync(SELECTED_FILE)
+
+        zip_container = await zip_container.loadAsync(SELECTED_FILE)
+        return zip_container
+    }
+    async function getItem(filename){
+        return await files.file(filename).async('array')
+    }
+    function oneItemSubmit(filename) {
+        var zip_container = new JSZip();
+        zip_container.loadAsync(SELECTED_FILE)
             .then(function () {
                 console.log(zip_container.file(filename))
                 zip_container.file(filename).async('array').then(function (content) {
@@ -134,102 +138,151 @@
                 }));
             });
     }
-
+    function info_write(contents){
+        $('#progress-status').text(contents)
+        $('#progress-window').attr('class', 'alert alert-info')
+    }
+    function server_message_write(contents){
+        $('#progress-server-message').text(contents)
+        $('#progress-window').attr('class', 'alert alert-info')
+    }
     $(document).ready(function () {
+        $(document).ajaxError(function myErrorHandler(event, xhr, ajaxOptions, thrownError) {
+            try{
+                reset_state_with_error(xhr.responseJSON.status)
+            }catch (error){
+                reset_state_with_error(thrownError)
+            }
+        });
         $("#file-picker").on("change", function () {
             SELECTED_FILE = this.files[0];
         });
-        $("#test2").on("click", function (e){
-            e.preventDefault()
-            console.log(SELECTED_FILE.name)
-            handleFile(SELECTED_FILE,'my_suit.jpg')
-        })
-
         // Set up submit
-        $("#test_button").on("click", function (e) {
+        $("#upload-button").on("click", function (e) {
             e.preventDefault()
             $("#progress").show()
             var $progressBar = $("#progress-bar");
 
-            $("#upload-form :input").attr("disabled","disabled")
+            $("#file-picker").attr("disabled","disabled")
+            $("#upload-button").hide()
             $progressBar.css({"width": "0%"});
 
-            learningTest()
+            run_task()
         })
     });
 
-    function learningTest() {
-        function finish_ajax(datas) {
-            console.log('finish')
-            $.ajax({
-                    type: "POST",
-                    url: "/test/task_finish",
-                    data: JSON.stringify(datas),
-                    contentType: "application/json",
+    function task_finish(datas) {
+        fd = collectFormData();
+        fd.append('datas', JSON.stringify(datas))
 
-                    success: function (data) {
-                        // Finish 처리
-                        console.log(data)
-                    },
-                    error: function (xtr, status, error) {
-                        console.error(xtr, status, error)
-                    }
-
-                }
-            )
-        }
-        // task
-        function recursively_ajax(datas) {
-            $.ajax({
+        // task initialization
+        $.ajax({
                 type: "POST",
-                url: "/test/task_test",
-                cache: "false",
-                data: JSON.stringify (datas),
-              contentType: "application/json",
-                success: function (datas) {
-                    datas['count'] += 1
-
-                    var $progressBar = $("#progress-bar");
-                    var total = datas['total']
-                    var pos = parseInt(datas['count'])
-                    var percent = Math.min(Math.ceil(pos/total*100),100)
-
-                    $progressBar.css({"width":percent + "%"})
-                    $progressBar.text(percent+"%")
-
-                    if (datas['count'] === datas['total']) {
-                        finish_ajax(datas)
-                    } else {
-                        recursively_ajax(datas);
-                    }
+                url: "/submit/task_finish",
+                data: fd,
+                contentType: false,
+                processData: false,
+                cache: false,
+                success: function (data) {
+                    info_write('Processing Success!! Your result have been registered in the database. Please check the leaderboard.')
                 },
-                error: function(xtr,status,error){
+                error: function (xtr, status, error) {
                     console.error(xtr, status, error)
                 }
-            });
+
+            }
+        )
+    }
+
+    async function run_task() {
+        if (SELECTED_FILE==""){
+            reset_state_with_error('Please select a zip file to submit.')
+            return
         }
+        info_write('Running start')
+        files = await openZip()
         // Collect the form data.
         fd = collectFormData();
 
         // task initialization
         $.ajax({
                 type: "POST",
-                url: "/test/task_init",
+                url: "/submit/task_init",
                 data: fd,
                 contentType: false,
                 processData: false,
                 cache: false,
                 success: function (data) {
                     console.log(data)
-                    recursively_ajax(data)
+                    task_processing(data)
                 },
-                error: function(xtr,status,error){
+                error: function(xtr, status, error){
                     console.log(xtr.responseJSON.status)
-                    $('#progress-status').text(xtr.responseJSON.status)
-                    movePos('#progress-status')
                 }
             }
         )
+    }
+
+    function reset_state_with_error(error){
+        if (error===""){
+            error = "An unidentified error has occurred. There may be a problem with the server."
+        }
+        $('#progress-status').text(error)
+        $('#progress-server-message').text('')
+        $('#progress-window').attr('class', 'alert alert-danger')
+        moveTop()
+
+        $("#file-picker").removeAttr("disabled");
+        $("#upload-button").show();
+        files = null
+    }
+    // task
+    async function task_processing(datas) {
+        fd = collectFormData();
+
+        info_write('Processing image: ' +datas.next_required +' (' +(datas.count+1)+'/'+datas.total+')')
+        try {
+            var byte_contents = await getItem(datas.next_required)
+        } catch (error) {
+            reset_state_with_error('[ERROR] ' + datas.next_required + ' does not exists. please check your zip file.')
+            throw error
+        }
+
+        fd.append('file',  JSON.stringify(byte_contents))
+        fd.append('datas', JSON.stringify(datas))
+
+        $.ajax({
+            type: "POST",
+            url: "/submit/task_processing",
+            processData: false,
+            cache: false,
+            data: fd,
+            contentType: false,
+            success: function (datas) {
+                datas['count'] += 1
+
+                var $progressBar = $("#progress-bar");
+                var total = datas['total']
+                var pos = parseInt(datas['count'])
+                var percent = Math.min(Math.ceil(pos / total * 100), 100)
+
+                $progressBar.css({"width": percent + "%"})
+                $progressBar.text(percent + "%")
+
+                if ("server_message" in datas){
+                    server_message_write(datas['server_message'])
+                    delete datas['server_message']
+                }
+                if (datas['count'] === datas['total']) {
+                    task_finish(datas)
+                } else {
+                    task_processing(datas);
+                }
+            },
+            error: function (xtr, status, error) {
+                console.error(xtr, status, error)
+            }
+        });
     }
 </script>
 {% endblock %}

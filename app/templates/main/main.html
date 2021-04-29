@@ -1,10 +1,52 @@
 {% extends '/main/index.html'%}
 {% block content %}
+
+{% for category, message in get_flashed_messages(with_categories=true) %}
+<div class="alert alert-{{ category }}">
+    {{ message }}
+</div>
+{% endfor %}
+
 <div class="container">
 
-  <div class="starter-template">
-    <h1>Bootstrap starter template</h1>
-    <p class="lead">Use this document as a way to quickly start any new project.<br> All you get is this text and a mostly barebones HTML document.</p>
-  </div>
+    <div class="starter-template">
+        <h1>Gachon ConvNet Challenge</h1>
+        <img src="static/img/opening.png" width="90%">
+    </div>
+    <div class="reg-header">
+        <p style="line-height:1">The "Gachon ConvNet Challenge" is a team project in the MultimediaLab
+            class. Each team (4 ~ 5 students) will be given a specific task, in which, they
+            will employ deep learning model to achieve results. The challenge is divided into
+            three parts: Training phase, testing phase and Presentation. The key summary
+            of the challenge is as follows:</p>
+        <li style="margin: 10px 0">For each task, the training and validation datasets will be provided. The
+            students are restricted to use the provided datasets only. For
+            dataset, training procedure and working environment, please refer to sections 4 and 5.
+        </li>
+        <li style="margin: 10px 0">
+            After the training period, each team will be provided with test images.
+            The teams will test their models for the test images to obtain output
+            images. The output images have to be submitted to 'evaluation
+            server' within due date.
+        </li>
+        <li style="margin: 10px 0">
+            All output images will undergo some quality evaluation metrics (please
+            refer to section 7) and based on the results, the leader-board will be set.
+            The leader-board will consists of all teams' performances according to the
+            evaluation metrics in a descending manner, i.e. the best team will be at
+            the top of the leader-board, the second best team will be at the second
+            position and so on.
+        </li>
+        <li style="margin: 10px 0">
+            All teams are required to present their solutions within due date. The presentation should briey contain
+            (not limited to) problem statement, solution, contribution (if any) and summary.
+        </li>
+        <li style="margin: 10px 0">
+            All teams are required to write a final presentation report on
+            the solution and submit within due date.
+        </li>
+
+    </div>
+
 </div><!-- /.container -->
 {% endblock %}

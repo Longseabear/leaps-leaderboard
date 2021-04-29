@@ -1,10 +1,23 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
-</head>
-<body>
-$END$
-</body>
-</html>
+{% extends '/main/index.html'%}
+{% block content %}
+
+<div class="container">
+    <div class="starter-template">
+        <h1>CVIP leaderboard: Task Colorization</h1>
+
+        {% block task_desc %}
+        {% endblock %}
+
+        <div class="row">
+            <div class="col-md-6"></div>
+            <div class="col-md-6 text-right">
+                <input class="btn btn-link" type="submit" value="Model Submit" id="upload-button">
+            </div>
+        </div>
+        <hr>
+{{table_item | safe}}
+
+    </div>
+</div><!-- /.container -->
+
+{% endblock %}

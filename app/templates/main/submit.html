@@ -1,0 +1,55 @@
+{% extends '/main/index.html'%}
+{% block content %}
+
+<div class="container">
+    <h1>Submit your result</h1>
+
+The provided training data may be used for learning the parameters of the algorithms.<br>
+You must use only the training sample for parameter update. Dataset for validation is additionally provided.<p><p>
+
+You must submit it as a zip file. There are rules submission for every task.<br>
+Be sure to follow the submission rules. If you select a task, you can check the submission rules.<p>
+
+The total score is determined by the sum of the z-score of each task.
+Specifically, the z-score is calculated by subtracting the mean from the value of each comparison metric and
+divided it by the standard deviation. If the z-score value is positive, it means your score is aboe average.<p>
+
+<b>Note that the z-score is not a fixed value.</b> It can change according to the mean and standard deviation of each evaluation metric.
+
+
+{% for field, errors in form.errors.items() %}
+<div class="alert alert-danger" role="alert">
+    <strong>{{ form[field].label }}</strong>: {{ ', '.join(errors) }}
+</div>
+{% endfor %}
+
+<form id="upload-form" method="POST" enctype="multipart/form-data">
+    {{ form.csrf_token }}
+    <div class="form-group">
+        <label for="teamname">&nbsp;Team Name</label>
+        <input type="text" class="col-xs-6 margin-bottom-20 form-control" name="teamname" id="teamname"
+               value="{{ form.teamname.data or '' }}">
+    </div>
+
+    <div class="form-group">
+        <label for="method">&nbsp;Method Name (e.g., DnCNN)</label>
+        <input type="text" class="col-xs-6 margin-bottom-20 form-control" name="method" id="method"
+               value="{{ form.method.data or '' }}">
+    </div>
+    <p> </p>
+
+    <div class="form-group">
+        <label for="code">&nbsp;code link (github)</label>
+        <input type="text" class="col-xs-6 margin-bottom-20 form-control" name="code" id="code"
+               value="{{ form.code.data or '' }}">
+    </div>
+    <p> </p>
+
+    <strong>Task:</strong><br>
+    {{form.task(class_="form-control")}}
+    <p> </p>
+    <input type="submit" value="Next" id="upload-button">
+</form>
+</div>
+
+{% endblock %}

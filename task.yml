@@ -1,2 +1,28 @@
-TASKS: ['classification','colorization','denoising']
+TASKS: ['colorization','denoising']
 
+MODELS:
+  colorization:
+    name: 'colorization'
+    total: 1000
+    label_path: 'app/resources/task/cvip_dataset'
+    input_type: 'image'
+
+    losses: ['PSNRMetric', 'L1Metric', 'MSEMetric']
+    losses_weight: [1.0, -1.0, -1.0] # similarity +1, loss -1
+
+#  classification:
+#    name: 'classification'
+#    total: 150
+#    label_path: 'app/resources/task/classification'
+#    input_type: 'text'
+#    losses: ['PSNRMetric', 'L1Metric', 'MSEMetric']
+#    losses_weight: [1.0, -1.0, -1.0] # similarity +1, loss -1
+
+  denoising:
+    name: 'denoising'
+    total: 1000
+    label_path: 'app/resources/task/cvip_dataset'
+    input_type: 'image'
+
+    losses: ['PSNRMetric', 'L1Metric', 'MSEMetric']
+    losses_weight: [1.0, -1.0, -1.0] # similarity +1, loss -1

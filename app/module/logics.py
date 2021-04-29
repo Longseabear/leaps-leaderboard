@@ -2,37 +2,51 @@ import numpy as np
 import os
 import config
 from skimage.io import imread
-from app.module.LOSSES import LOSSES, Loss
+from app.module.LOSSES import Metric
+import zipfile
+import matplotlib.pyplot as plt
+import skimage.io as io
+import numpy as np
+from PIL import Image
+import io
+import config
 
-config.RESOURCE_PATH = "../resources"
+class PreProcessor():
+    @staticmethod
+    def factory(image_type):
+        if image_type == 'image':
+            return ToImage()
+        else:
+            raise NotImplementedError
+
+class ToImage(PreProcessor):
+    def preprocess(self, raw, gt_path):
+        img_bytes = io.BytesIO(bytearray(raw))
+        gt_bytes = open(gt_path, 'rb')
+
+        img = np.array(Image.open(img_bytes))
+        gt = np.array(Image.open(gt_bytes))
+        img = img[:, :, :3] / 255.
+        gt = gt[:, :, :3] / 255.
+
+        return img, gt
+
 class LossProcessor():
-    def __init__(self, task, src_paths, user=None):
-        self.gt_path = os.path.join(config.RESOURCE_PATH, 'task', task)
-        self.img_path = src_paths
+    def __init__(self, task):
+        self.loss_fns = [Metric.factory(l) for l in config.TASK_MODELS[task].losses]
 
-        self.gts = [os.path.join(self.gt_path, i) for i in os.listdir(self.gt_path)]
-        self.imgs = [os.path.join(self.img_path, i) for i in os.listdir(self.img_path)]
-
-        self.gts = sorted(self.gts)
-        self.imgs = sorted(self.imgs)
-
-        self.loss_fns = LOSSES[task]
-
-    def calculate(self):
-        if len(self.imgs) != len(self.gts):
-            raise Exception('')
-
-        sets = {}
+    def calculate(self, img, gt):
+        losses = {}
         for loss_fn in self.loss_fns:
-            sets[loss_fn.name] = 0
-        for img_path, gt_path in zip(self.imgs, self.gts):
-            img = imread(img_path) / 255.
-            gt = imread(gt_path) / 255.
+            losses[loss_fn.name] = 0
 
-            for loss_fn in self.loss_fns:
-                 sets[loss_fn.name] += loss_fn(img, gt)
         for loss_fn in self.loss_fns:
-            sets[loss_fn.name] /= len(self.imgs)
-        print(sets)
+            losses[loss_fn.name] += loss_fn(img, gt)
 
-LossProcessor('colorization', '../resources/task/task_input').calculate()
+        return losses
+
+if __name__ == '__main__':
+    pass
+    # zipfile.ZipFile('../resources/Pictures.zip')
+    # config.RESOURCE_PATH = "../resources"
+    # LossProcessor('colorization', '../resources/task/task_input').calculate()

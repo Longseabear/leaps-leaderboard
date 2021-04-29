@@ -1,5 +1,22 @@
 {% extends '/main/submit/submit_process.html'%}
 {% block task_desc %}
-  <div class="">
-  </div><p></p>
+<strong> colorization task</strong>
+<div class="text-info">
+You have to upload a zip file like this:
+<pre>
+your_zip_file.zip
+├───────image_000000.png
+├───────image_000001.png
+├───────image_000002.png
+├───────image_000003.png
+├───────image_000004.png
+├───────image_000005.png
+  ....
+├───────image_000998.png
+└───────image_000999.png
+</pre>
+
+Please save the image as png format. It's lossless compression, so it can show the accuracy of your model as it is.
+<p> </p>
+</div>
 {% endblock %}

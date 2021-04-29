@@ -1,27 +1,51 @@
-import flask
-import pymysql
-import OpenSSL
-import sqlite3
+from sqlalchemy import create_engine, Column, Integer, String
+from sqlalchemy.orm import sessionmaker
+from sqlalchemy.ext.declarative import declarative_base
+import pandas as pd
 
-con = sqlite3.connect('example.db')
-cur = con.cursor()
+_db_uri = 'sqlite:///:memory:'
+engine = create_engine(_db_uri, echo=True)
+Session = sessionmaker(bind=engine)
 
-# cur.execute('''CREATE TABLE stocks
-#                (date text, trans text, symbol text, qty real, price real)''')
-#cur.execute("INSERT INTO stocks VALUES ('2006-01-05','BUY','RHAT',100,35.14)")
+Base = declarative_base(engine)
 
-t = ('2016',)
+class MyTable(Base):
+    __tablename__ = 'my_table'
+    id = Column(Integer, primary_key=True)
+    date = Column(String)
+    name = Column(String)
+    value = Column(Integer)
 
-purchases = [('2006-03-28', 'BUY', 'IBM', 1000, 45.00),
-             ('2006-04-05', 'BUY', 'MSFT', 1000, 72.00),
-             ('2006-04-06', 'SELL', 'IBM', 500, 53.00),
-            ]
+def _test():
+    Base.metadata.drop_all(engine)
+    Base.metadata.create_all(engine)
+    session = Session()
 
-cur.executemany('INSERT INTO stocks VALUES (?,?,?,?,?)', purchases)
-con.commit()
+    def _add_test_data():
+        rows = [
+            MyTable(date="D1", name="A", value=2),
+            MyTable(date="D1", name="B", value=3),
+            MyTable(date="D2", name="A", value=3),
+            MyTable(date="D2", name="C", value=1),
+        ]
+        session.add_all(rows)
+        session.commit()
 
-cur.execute('SELECT * from stocks')
-print(cur.fetchall())
+    # create test data
+    _add_test_data()
 
-con.commit()
-con.close()
+    # use `sa` to query data from the database
+    # q = session.query(MyTable)  # all columns
+    q = session.query(MyTable.date, MyTable.name, MyTable.value)  # explicit
+
+    # read data into pandas directly from the query `q`
+    df = pd.read_sql(q.statement, q.session.bind)
+    print(df)
+
+    # pivot the results
+    df_pivot = df.pivot(index="date", columns="name", values="value")
+    print(df_pivot)
+
+
+if __name__ == '__main__':
+    _test()

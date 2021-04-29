@@ -1,0 +1,40 @@
+{% extends '/main/index.html'%}
+{% block content %}
+<div class="container content">
+    <div class="row">
+        <div class="col-md-6 col-md-offset-3 col-sm-8 col-sm-offset-2">
+            <form method="post" action="{{ url_for('auth.login') }}">
+                <div class="reg-header">
+                    <h2>Login</h2>
+                    <p>If you do not have an account, please <a href="/register" class="">registration</a>.</p>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12">
+                        {{ form.csrf_token }}
+                        {% include "main/auth/form_errors.html" %}
+
+                        <div class="form-group">
+                            <label for="email">email</label>
+                            <input type="text" class="col-xs-6 margin-bottom-20 form-control" name="email" id="email"
+                                   value="{{ form.email.data or '' }}">
+                        </div>
+                        <div class="form-group">
+                            <label for="password">&nbsp;password</label>
+                            <input type="password" class="col-xs-6 margin-bottom-20 form-control" name="password" id="password"
+                                   value="{{ form.password.data or '' }}">
+                        </div>
+                    </div>
+                </div>
+                <hr>
+                <div class="row">
+                    <div class="col-md-6"></div>
+                    <div class="col-md-6 text-right">
+                        <button class="btn btn-large btn-primary" type="submit">login</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

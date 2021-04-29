@@ -1,10 +1,13 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
-</head>
-<body>
-$END$
-</body>
-</html>
+<!-- form error -->
+{% for field, errors in form.errors.items() %}
+<div class="alert alert-danger" role="alert">
+    <strong>{{ form[field].label }}</strong>: {{ ', '.join(errors) }}
+
+</div>
+{% endfor %}
+<!-- flash 오류 -->
+{% for category, message in get_flashed_messages(with_categories=true) %}
+<div class="alert alert-{{ category }}">
+    {{ message }}
+</div>
+{% endfor %}

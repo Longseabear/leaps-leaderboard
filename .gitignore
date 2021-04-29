@@ -7,3 +7,9 @@
 .idea/vcs.xml
 __pycache__/
 example.db
+leaps.db
+config/production.py
+.idea/dataSources/
+app/resources/task/
+venv/
+.idea/

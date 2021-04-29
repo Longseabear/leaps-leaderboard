@@ -1,10 +1,41 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
-</head>
-<body>
-$END$
-</body>
-</html>
+{% extends '/main/index.html'%}
+{% block content %}
+<div class="container content">
+    <div class="row">
+        <div class="col-md-6 col-md-offset-3 col-sm-8 col-sm-offset-2">
+            <form method="post" action="{{ url_for('auth.email_register') }}">
+                <div class="reg-header">
+                    <h2>Registration</h2>
+                    <p>If you already have an account, please <a href="/login" class="">login</a>.</p>
+                    <p>Registration is done through school email verification. Please enter your email and check
+                        your mailbox.</p>
+                    <p>Please be sure to use the @gachon.ac.kr domain.</p>
+                    <p>After signing up, your ID will be your email address.</p>
+                </div>
+
+                <div class="row">
+                    <div class="col-sm-12">
+                        <h5 class="form-signin-heading">Email verification for registration</h5>
+                        {{ form.csrf_token }}
+                        {% include "main/auth/form_errors.html" %}
+                        <div class="form-group">
+                            <input type="text" class="col-xs-6 margin-bottom-20" name="email_name" id="email_name"
+                                   value="{{ form.email_name.data or '' }}"> <label for="email_name">&nbsp;@ gachon.ac.kr</label>
+                        </div>
+
+                    </div>
+                </div>
+
+                <hr>
+                <div class="row">
+                    <div class="col-md-6"></div>
+                    <div class="col-md-6 text-right">
+                        <button class="btn btn-large btn-primary" type="submit">Send email</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
