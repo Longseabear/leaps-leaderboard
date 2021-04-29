@@ -23,6 +23,7 @@ def create_admin():
                         student_name='장해웅',
                         student_number='201945115',
                         authority=True,
+                        nickname='leaps',
                         authority_type=1, # admin
                         registered_on=datetime.datetime.now()
                         ))
