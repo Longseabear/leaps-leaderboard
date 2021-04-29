@@ -3,7 +3,7 @@ from configModule import Config
 
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
-TASK_CONFIG = Config().from_yaml(os.path.dirname('task.yml'))
+TASK_CONFIG = Config().from_yaml(os.path.join(BASE_DIR, 'task.yml'))
 RESOURCE_PATH = 'app/resources'
 
 # TASK Setting

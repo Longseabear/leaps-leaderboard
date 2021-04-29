@@ -9,7 +9,7 @@ import skimage.io as io
 import numpy as np
 from PIL import Image
 import io
-import config
+import config.default as config
 
 class PreProcessor():
     @staticmethod

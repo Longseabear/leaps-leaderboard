@@ -2,7 +2,7 @@ from flask import jsonify
 from flask_table import Table, Col
 from app import db
 from app.models import SubmitModel, Losses, User
-import config
+import config.default as config
 import math
 import pandas as pd
 import json

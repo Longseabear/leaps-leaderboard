@@ -5,7 +5,7 @@ import io
 from app.module.logics import LossProcessor, PreProcessor
 from app.forms import UserLoginForm, ModelSubmitForm
 from app import db
-import config
+import config.default as config
 import json
 from app.models import User, SubmitModel, Losses
 from app.views.auth_views import login_required

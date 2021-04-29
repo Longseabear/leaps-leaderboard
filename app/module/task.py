@@ -1,5 +1,4 @@
 import time
-import uw
 import zipfile
 import matplotlib.pyplot as plt
 import skimage.io as io
