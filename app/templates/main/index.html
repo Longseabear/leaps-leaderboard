@@ -114,14 +114,8 @@
 {% endblock %}
 
 <!--    Active information add    -->
-<script>
-    var pathname = window.location.pathname
-
-    $('.nav .nav-item').each(function (index, item) {
-        if (pathname.includes(item.id)) $(item).addClass('active');
-        else if (item.className.includes('active')) $(item).removeClass('active');
-    });
-</script>
+{% block script %}
+{% endblock %}
 
 </body>
 </html>

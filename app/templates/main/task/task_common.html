@@ -11,13 +11,30 @@
         <div class="row">
             <div class="col-md-6"></div>
             <div class="col-md-6 text-right">
-                <input class="btn btn-link" type="submit" value="Model Submit" id="upload-button">
+                <a class="btn btn-link" type="submit" value="Model Submit" id="submit_button" href="{{ url_for('main.submit_tab') }}">Submit</a>
             </div>
         </div>
         <hr>
 {{table_item | safe}}
-
+{% if g.user.authority_type == 1 %}
+    <input type="text" id="removed_id"
+       value="">
+    <input type="button" value="remove" id="removed_btn"/>
+{% endif %}
     </div>
 </div><!-- /.container -->
 
+{% endblock %}
+
+{% block script %}
+<script type='text/javascript'>
+$(document).ready(function(){
+    $("#removed_btn").on('click', function() {
+        if(confirm("정말로 삭제하시겠습니까?")) {
+            console.log($("#removed_id").data('value'));
+            location.href = "{{url_for('main.remove')}}/" + $("#removed_id").val();
+        }
+    });
+});
+</script>
 {% endblock %}

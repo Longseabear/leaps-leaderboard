@@ -1,4 +1,4 @@
-from flask import jsonify
+from flask import jsonify, session
 from flask_table import Table, Col
 from app import db
 from app.models import SubmitModel, Losses, User
@@ -55,7 +55,11 @@ class LeaderBoardTable():
 
             self.examples = self.examples.sort_values(by=['total'], ascending=False)
             self.examples = self.examples.reset_index()
-            del self.examples['id'], self.examples['task'], self.examples['index']
+
+            if session.get('admin_mode') is None:
+                del self.examples['id']
+            del self.examples['task'], self.examples['index']
+
         except Exception as e:
             self.examples = None
 

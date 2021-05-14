@@ -46,6 +46,8 @@ def login():
         if error is None:
             session.clear()
             session['user_id'] = user.email
+            if user.authority_type == 1:
+                session['admin_mode'] = True
             return redirect('/')
         flash(error, 'danger')
     return render_template('main/auth/login.html', form=form)

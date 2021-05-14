@@ -1,11 +1,11 @@
-from flask import Blueprint, request, render_template, flash,redirect, url_for
+from flask import Blueprint, request, render_template, flash,redirect, url_for, session, abort
 from flask import current_app as app
 from app.module.leader_borad import LeaderBoardTable
 from uuid import uuid4
 import zipfile
 from app.forms import UserLoginForm, ModelSubmitForm
 from app import db
-from app.models import User
+from app.models import User, SubmitModel
 from app.views.auth_views import login_required
 bp = Blueprint('main', __name__, url_prefix='/')
 
@@ -41,3 +41,13 @@ def login_tab():
 def register_tab():
     return redirect('/auth/email_register')
 
+@bp.route('/remove/', defaults = {"model_id":-1})
+@bp.route('/remove/<int:model_id>')
+@login_required
+def remove(model_id):
+    if session.get('admin_mode') != 1:
+        abort(400, "admin only.")
+    model = SubmitModel.query.get_or_404(model_id)
+    db.session.delete(model)
+    db.session.commit()
+    return redirect(url_for("main.leaderboard_table", task=model.task))
