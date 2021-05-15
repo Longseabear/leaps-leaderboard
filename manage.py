@@ -7,6 +7,7 @@ import datetime
 
 from flask_script import Manager
 from flask_migrate import Migrate, MigrateCommand
+from werkzeug.security import generate_password_hash, check_password_hash
 
 from app import db
 from app.models import *
@@ -19,7 +20,7 @@ manager.add_command('db', MigrateCommand)
 @manager.command
 def create_admin():
     db.session.add(User(email="leap1568@gmail.com",
-                        password="admin",
+                        password=generate_password_hash("비밀"),
                         student_name='장해웅',
                         student_number='201945115',
                         authority=True,
@@ -27,6 +28,12 @@ def create_admin():
                         authority_type=1, # admin
                         registered_on=datetime.datetime.now()
                         ))
+    db.session.commit()
+
+@manager.command
+def remove_account(email):
+    model = SubmitModel.query.get_or_404(email)
+    db.session.delete(model)
     db.session.commit()
 
 @manager.command
