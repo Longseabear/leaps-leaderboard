@@ -17,7 +17,6 @@ MODELS:
 #    input_type: 'text'
 #    losses: ['PSNRMetric', 'L1Metric', 'MSEMetric']
 #    losses_weight: [1.0, -1.0, -1.0] # similarity +1, loss -1
-
   denoising:
     name: 'denoising'
     total: 1000
