@@ -20,7 +20,7 @@ manager.add_command('db', MigrateCommand)
 @manager.command
 def create_admin():
     db.session.add(User(email="leap1568@gmail.com",
-                        password=generate_password_hash("비밀"),
+                        password=generate_password_hash("#0vmflzmfl"),
                         student_name='장해웅',
                         student_number='201945115',
                         authority=True,
@@ -32,7 +32,7 @@ def create_admin():
 
 @manager.command
 def remove_account(email):
-    model = SubmitModel.query.get_or_404(email)
+    model = User.query.get_or_404(email)
     db.session.delete(model)
     db.session.commit()
 
