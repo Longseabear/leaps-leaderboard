@@ -16,7 +16,7 @@ class Metric(object):
             return L1Metric('L1Metric')
         elif type == "PSNRMetric":
             return PSNRMetric('PSNRMetric')
-        elif type=="SSIM":
+        elif type=="SSIMMetric":
             return SSIMMetric('SSIMMetric')
         else:
             raise NotImplementedError
@@ -37,7 +37,7 @@ class PSNRMetric(Metric):
 class SSIMMetric(Metric):
     def __call__(self, img, gt):
         # img, gt is float
-        return structural_similarity(gt, img)
+        return structural_similarity(gt, img, multichannel=True)
 
 if __name__ == '__main__':
     gt = np.random.rand(11,11)

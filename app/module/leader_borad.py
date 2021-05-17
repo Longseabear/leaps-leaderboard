@@ -52,7 +52,7 @@ class LeaderBoardTable():
                 loss = loss_container['name']
                 self.examples['total'] += (self.examples[loss] - self.examples[loss].mean()) / (
                             self.examples[loss].std(ddof=0) + self.eps) * loss_container['w']
-
+            self.examples['total'] /= 2
             self.examples = self.examples.sort_values(by=['total'], ascending=False)
             self.examples = self.examples.reset_index()
 
