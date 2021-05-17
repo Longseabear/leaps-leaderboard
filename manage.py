@@ -20,7 +20,7 @@ manager.add_command('db', MigrateCommand)
 @manager.command
 def create_admin():
     db.session.add(User(email="leap1568@gmail.com",
-                        password=generate_password_hash("#0vmflzmfl"),
+                        password=generate_password_hash("admin"),
                         student_name='장해웅',
                         student_number='201945115',
                         authority=True,
